@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/iftsoft/gopack/lla"
+	"time"
 )
 
 var appLog lla.LogAgent
@@ -23,8 +24,9 @@ func main() {
 	name := "Test Name"
 	RunLoggingTest(name)
 
-	fmt.Println("-------END------------")
+	time.Sleep(20*time.Millisecond)
 	lla.StopFileLogger()
+	fmt.Println("-------END------------")
 }
 
 func RunLoggingTest(name interface{}) {
