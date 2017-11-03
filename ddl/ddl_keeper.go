@@ -2,7 +2,7 @@ package ddl
 
 import (
 	"reflect"
-	"go-ticket/lla"
+	"github.com/iftsoft/gopack/lla"
 	"errors"
 )
 

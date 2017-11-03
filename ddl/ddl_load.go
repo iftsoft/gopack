@@ -6,7 +6,7 @@ import (
 	"errors"
 	"time"
 	"encoding/json"
-	"go-ticket/lla"
+	"github.com/iftsoft/gopack/lla"
 )
 
 

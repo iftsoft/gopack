@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"encoding/json"
 	"database/sql"
-	"go-ticket/lla"
+	"github.com/iftsoft/gopack/lla"
 )
 
 // Format to snake string, XxYy to xx_yy

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 	"errors"
-	"go-ticket/lla"
+	"github.com/iftsoft/gopack/lla"
 )
 
 // Database Configuration

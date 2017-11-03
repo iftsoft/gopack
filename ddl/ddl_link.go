@@ -2,7 +2,7 @@ package ddl
 
 import (
 	"database/sql"
-	"go-ticket/lla"
+	"github.com/iftsoft/gopack/lla"
 	"errors"
 	"reflect"
 )

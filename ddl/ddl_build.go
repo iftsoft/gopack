@@ -3,7 +3,7 @@ package ddl
 import (
 	"reflect"
 	"fmt"
-	"go-ticket/lla"
+	"github.com/iftsoft/gopack/lla"
 )
 
 const ddl_estimate_result = "estimate_result"
