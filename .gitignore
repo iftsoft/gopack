@@ -1,0 +1,10 @@
+CRMGo
+/pkg/
+/.idea/
+/src/
+
+*.log
+
+CRM_log\.txt
+
+*.txt
