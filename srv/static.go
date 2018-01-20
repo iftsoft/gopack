@@ -2,6 +2,7 @@ package srv
 
 import (
 	"net/http"
+	"io/ioutil"
 	"encoding/base64"
 )
 
@@ -9,8 +10,7 @@ type Source int8
 const (
 	Source_plain Source = iota
 	Source_base64
-	Source_file_txt
-	Source_file_bin
+	Source_file
 )
 
 const (
@@ -35,6 +35,8 @@ func AddStaticFile(url string, cont string, src Source, data string) (err error)
 		file.byteDump = []byte(data)
 	case Source_base64:
 		file.byteDump, err = base64.StdEncoding.DecodeString(data)
+	case Source_file:
+		file.byteDump, err = ioutil.ReadFile(data)
 	}
 	if err == nil && file.byteDump != nil {
 		staticStack[url] = &file

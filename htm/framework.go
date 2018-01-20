@@ -3,7 +3,7 @@ package htm
 import (
 	"strconv"
 	"text/template"
-	"go-ticket/htm/templ"
+	"github.com/iftsoft/gopack/htm/templ"
 )
 
 ///////////////////////////////////////////////////////////////////////
