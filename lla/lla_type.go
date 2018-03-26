@@ -50,11 +50,16 @@ func (t DateOnly) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements the json.Unmarshaler interface.
 func (t *DateOnly) UnmarshalJSON(data []byte) error {
-	if strings.Compare(string(data), jsonNull) == 0 {
+	str := string(data)
+	if str == `""` {
 		*t = DateOnly{}
 		return nil
 	}
-	tt, err := time.Parse(jsonDate, string(data))
+	if strings.Compare(str, jsonNull) == 0 {
+		*t = DateOnly{}
+		return nil
+	}
+	tt, err := time.Parse(jsonDate, str)
 	*t = DateOnly{tt}
 	return err
 }
@@ -119,11 +124,16 @@ func (t TimeOnly) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements the json.Unmarshaler interface.
 func (t *TimeOnly) UnmarshalJSON(data []byte) error {
-	if strings.Compare(string(data), jsonNull) == 0 {
+	str := string(data)
+	if str == `""` {
+		*t = TimeOnly{}
+		return nil
+	}
+	if strings.Compare(str, jsonNull) == 0 {
 		*t = TimeOnly{ time.Unix(0, -1) }
 		return nil
 	}
-	tt, err := time.Parse(jsonTime, string(data))
+	tt, err := time.Parse(jsonTime, str)
 	*t = TimeOnly{tt}
 	return err
 }
@@ -187,11 +197,16 @@ func (t DateTime) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements the json.Unmarshaler interface.
 func (t *DateTime) UnmarshalJSON(data []byte) error {
-	if strings.Compare(string(data), jsonNull) == 0 {
+	str := string(data)
+	if str == `""` {
 		*t = DateTime{}
 		return nil
 	}
-	tt, err := time.Parse(jsonDateTime, string(data))
+	if strings.Compare(str, jsonNull) == 0 {
+		*t = DateTime{}
+		return nil
+	}
+	tt, err := time.Parse(jsonDateTime, str)
 	*t = DateTime{tt}
 	return err
 }
@@ -255,11 +270,16 @@ func (t FullTime) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements the json.Unmarshaler interface.
 func (t *FullTime) UnmarshalJSON(data []byte) error {
-	if strings.Compare(string(data), jsonNull) == 0 {
+	str := string(data)
+	if str == `""` {
 		*t = FullTime{}
 		return nil
 	}
-	tt, err := time.Parse(jsonFullTime, string(data))
+	if strings.Compare(str, jsonNull) == 0 {
+		*t = FullTime{}
+		return nil
+	}
+	tt, err := time.Parse(jsonFullTime, str)
 	*t = FullTime{tt}
 	return err
 }
