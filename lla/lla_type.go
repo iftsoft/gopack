@@ -10,11 +10,11 @@ const (
 	textDate		= "2006-01-02"
 	textTime		= "15:04:05"
 	textDateTime	= "2006-01-02 15:04:05"
-	textFullTime	= "2006-01-02 15:04:05.999999 -0700 MST"
+	textFullTime	= "2006-01-02 15:04:05.999999 -0700"
 	jsonDate		= "\"2006-01-02\""
 	jsonTime		= "\"15:04:05\""
 	jsonDateTime	= "\"2006-01-02 15:04:05\""
-	jsonFullTime	= "\"2006-01-02 15:04:05.999999 -0700 MST\""
+	jsonFullTime	= "\"2006-01-02 15:04:05.999999 -0700\""
 	jsonNull		= "null"
 )
 

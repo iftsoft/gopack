@@ -324,7 +324,7 @@ func (this *Framework)Time(name string) *Field {
 }
 
 // DatetimeField creates a default datetime input field
-func (this *Framework)Datetime(name string) *Field {
+func (this *Framework)DateTime(name string) *Field {
 	ret := this.Field(name, Type_DATETIME)
 	return ret
 }
