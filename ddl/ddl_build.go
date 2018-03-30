@@ -397,7 +397,7 @@ func (this *SelectBuilder) BuildQuery() string {
 //
 type UpdateBuilder struct {
 	CommonBuilder
-	setText  string
+	setText  	string
 }
 
 func CreateUpdateBuilder(driver, table string) *UpdateBuilder {
@@ -412,6 +412,7 @@ func CreateUpdateBuilder(driver, table string) *UpdateBuilder {
 	bld.TableName = table
 	return bld
 }
+
 
 // Create set param list for update
 func (this *UpdateBuilder) SetupUpdateParams(unit interface{}) {
@@ -466,6 +467,21 @@ func (this *UpdateBuilder) AppendField(value reflect.Value, col string, pref str
 	this.paramCnt++
 }
 
+// Create set param list for modify
+func (this *UpdateBuilder) SetupModifyParams(vals lla.ParamList) {
+	for _, par := range vals {
+		if col, ok := GetTableColumnName(this.TableName, par.Field); ok {
+			if this.paramCnt > 0 {
+				this.setText += ", "
+			}
+			this.parSlice = append(this.parSlice, par.Value)
+			this.setText += col
+			this.setText += " = "
+			this.setText += this.dialect.ParamHolder(this.paramCnt)
+			this.paramCnt++
+		}
+	}
+}
 
 // Generate UPDATE query
 func (this *UpdateBuilder) BuildQuery() string {

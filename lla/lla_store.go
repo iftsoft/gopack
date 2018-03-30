@@ -65,6 +65,7 @@ type ObjectKeeper interface {
 	Select(unit interface{}, keys ParamList) error
 	Update(unit interface{}) error
 	Insert(unit interface{}) error
+	Modify(vals, keys ParamList) (int64, error)
 	Delete(keys ParamList) (int64, error)
 }
 
