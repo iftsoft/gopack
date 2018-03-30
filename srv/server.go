@@ -13,8 +13,16 @@ import (
 
 // Database Configuration
 type ServConfig struct {
-	LocalIp string
-	NetPort string
+	LocalIp			string
+	NetPort 		string
+	ReadTimeout		int
+	WriteTimeout	int
+	UserTimeout		int
+	SessionTime		int
+	CookieName		string
+	TokenKey		string
+	ExtraKey		string
+	StaticDir		string
 }
 
 
@@ -22,12 +30,24 @@ type ServConfig struct {
 func (cfg *ServConfig) PrintData() {
 	fmt.Println("LocalIp ", cfg.LocalIp)
 	fmt.Println("NetPort ", cfg.NetPort)
+	fmt.Println("ReadTimeout ", cfg.ReadTimeout)
+	fmt.Println("WriteTimeout ", cfg.WriteTimeout)
+	fmt.Println("UserTimeout ", cfg.UserTimeout)
+	fmt.Println("SessionTime ", cfg.SessionTime)
+	fmt.Println("CookieName ", cfg.CookieName)
+	fmt.Println("TokenKey ", len(cfg.TokenKey))
+	fmt.Println("ExtraKey ", len(cfg.ExtraKey))
+	fmt.Println("StaticDir ", cfg.StaticDir)
 }
 // Get formatted string with config data
 func (cfg *ServConfig) String() string {
-	str := fmt.Sprintf("Database config: " +
-		"LocalIp = %s, NetPort = %s.",
-		cfg.LocalIp, cfg.NetPort)
+	str := fmt.Sprintf("Service config: " +
+		"LocalIp = %s, NetPort = %s, ReadTimeout = %d sec, WriteTimeout = %d sec, " +
+		"UserTimeout = %d sec, SessionTime = %d sec, CookieName = %s, " +
+		"TokenKey = %d Byte, ExtraKey = %d Byte, StaticDir = \"%s\".",
+		cfg.LocalIp, cfg.NetPort,  cfg.ReadTimeout,  cfg.WriteTimeout,
+		cfg.UserTimeout,  cfg.SessionTime,  cfg.CookieName,
+		len(cfg.TokenKey), len(cfg.ExtraKey), cfg.StaticDir)
 	return str
 }
 
@@ -52,11 +72,14 @@ func Run(srvCfg *ServConfig) error {
 		srvLog.Error("Error creating listener: %v", err)
 		return err
 	}
+	if srvCfg.ReadTimeout == 0	{	srvCfg.ReadTimeout = 30	}
+	if srvCfg.WriteTimeout == 0	{	srvCfg.WriteTimeout = 20	}
 
 	server := &http.Server{
-		ReadTimeout:    60 * time.Second,
-		WriteTimeout:   60 * time.Second,
-		MaxHeaderBytes: 1 << 16}
+		ReadTimeout:    time.Duration(srvCfg.ReadTimeout) * time.Second,
+		WriteTimeout:   time.Duration(srvCfg.WriteTimeout) * time.Second,
+		MaxHeaderBytes: 1 << 16,
+		}
 
 	go server.Serve(listener)
 
