@@ -20,7 +20,7 @@ func (this *TokenCoder)InitCoder(tokenKey string) {
 	} else if len(tokenKey) < 24 && len(tokenKey) >= 16 {
 		tokenKey = tokenKey[:16]
 	} else if len(tokenKey) < 16 {
-		tokenKey = "0123456789ABCDEFFEDCBA9876543210"
+		tokenKey = "2AB313F66B72072B95C7136A92518AC2"
 	}
 	this.secret	= []byte(tokenKey)
 }
@@ -28,7 +28,7 @@ func (this *TokenCoder)InitCoder(tokenKey string) {
 func (this *TokenCoder)EncodeToken(token interface{}) (dump string, err error) {
 	js, err := json.Marshal(&token)
 	if err != nil {
-		srvLog.Error("Token marshal error: ", err.Error())
+		srvLog.Error("Token marshal error: %s.", err.Error())
 		return dump, err
 	}
 	c, err := aes.NewCipher(this.secret)
@@ -47,8 +47,8 @@ func (this *TokenCoder)EncodeToken(token interface{}) (dump string, err error) {
 	return dump, nil
 }
 
-func (this *TokenCoder)DecodeToken(key string, token interface{}) (err error) {
-	res, err := base64.StdEncoding.DecodeString(key)
+func (this *TokenCoder)DecodeToken(token interface{}, dump string) (err error) {
+	res, err := base64.StdEncoding.DecodeString(dump)
 	if err != nil {
 		srvLog.Error("Decode token error: %s.", err.Error())
 		return err
@@ -62,10 +62,10 @@ func (this *TokenCoder)DecodeToken(key string, token interface{}) (err error) {
 	decrypter := cipher.NewCFBDecrypter(c, iv)
 	decrypted := make([]byte, len(res))
 	decrypter.XORKeyStream(decrypted, res)
-	srvLog.Trace("Decrypt %s to %s.", key, string(decrypted))
+	srvLog.Trace("Decrypt %s to %s.", dump, string(decrypted))
 
 	if err = json.Unmarshal(decrypted, token); err != nil {
-		srvLog.Error("Token unmarshal error: ", err.Error())
+		srvLog.Error("Token unmarshal error: %s.", err.Error())
 		return err
 	}
 	return nil
