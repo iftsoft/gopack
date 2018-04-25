@@ -27,9 +27,16 @@ type staticFile struct {
 
 var staticStack = map[string]*staticFile {}
 
+func AddStaticDump(url string, cont string, data []byte) (err error) {
+	file := &staticFile{ data, cont  }
+	if file.byteDump != nil {
+		staticStack[url] = file
+	}
+	return err
+}
 
 func AddStaticFile(url string, cont string, src Source, data string) (err error) {
-	file := staticFile{ nil, cont  }
+	file := &staticFile{ nil, cont  }
 	switch src {
 	case Source_plain:
 		file.byteDump = []byte(data)
@@ -39,7 +46,7 @@ func AddStaticFile(url string, cont string, src Source, data string) (err error)
 		file.byteDump, err = ioutil.ReadFile(data)
 	}
 	if err == nil && file.byteDump != nil {
-		staticStack[url] = &file
+		staticStack[url] = file
 	}
 	return err
 }
