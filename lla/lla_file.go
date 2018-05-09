@@ -10,10 +10,11 @@ import (
 )
 
 const (
-	kMaxInt64          = int64(^uint64(0) >> 1)
-	kLogExtensionLen   = 4
-	kLogCreatedTimeLen = 15 + kLogExtensionLen
-	kLogFilenameMinLen = 5  + kLogCreatedTimeLen
+	kChannelSize		= 1024
+//	kMaxInt64			= int64(^uint64(0) >> 1)
+	kLogExtensionLen	= 4
+	kLogCreatedTimeLen	= 15 + kLogExtensionLen
+	kLogFilenameMinLen	= 5  + kLogCreatedTimeLen
 )
 
 var gProgname = path.Base(os.Args[0])
@@ -27,7 +28,6 @@ func init() {
 	gProgname = tmpProgname[len(tmpProgname)-1]
 }
 
-
 // logger
 type fileLogger struct {
 	config	*LogConfig
@@ -35,7 +35,6 @@ type fileLogger struct {
 	day 	int
 	size	int64
 	read	chan []byte
-	done	chan struct{}
 	files	int   // number of files under `logPath` currently
 }
 
@@ -45,24 +44,20 @@ var gLogger fileLogger
 
 func StartFileLogger(cfg *LogConfig){
 	gLogger.config = cfg
-	gLogger.read = make(chan []byte, 1024)
-	gLogger.done = make(chan struct{})
 	if gLogger.config != nil && gLogger.config.LogLevel > LogLevelEmpty {
+		gLogger.read = make(chan []byte, kChannelSize)
 		go gLogger.work()
 	}
 }
 
 func StopFileLogger() {
 	if gLogger.config != nil && gLogger.config.LogLevel > LogLevelEmpty {
-		gLogger.done <- struct{}{}
-		<-gLogger.done
+		gLogger.read <- []byte{}
 	}
-	close(gLogger.read)
-	close(gLogger.done)
 }
 
 func LogToFile(level int, mesg string) {
-	if gLogger.config != nil && level > LogLevelEmpty {
+	if len(mesg) > 0 && gLogger.config != nil && level > LogLevelEmpty {
 		if level <= gLogger.config.LogLevel {
 			gLogger.read <- []byte(mesg)
 		}
@@ -73,28 +68,28 @@ func LogToFile(level int, mesg string) {
 }
 
 func (this *fileLogger) work(){
-	t := time.Now()
 	this.delOldFiles()
-	this.reopenLogFile(t)
+	this.reopenLogFile(time.Now())
 	for {
 		select {
-		case mesg := <- this.read:
-			t = time.Now()
-			this.logMsg(t, mesg)
-		case <-this.done:
-			t = time.Now()
-			this.logMsg(t, []byte("Close log file"))
-			this.done <- struct{}{}
-			break
+		case mesg := <- this.read :
+			if len(mesg) > 0 {
+				this.logMsg(mesg)
+			} else {
+				this.logMsg([]byte("Close log file"))
+				break
+			}
 		}
 	}
+	close(this.read)
 	if this.file != nil {
 		this.file.Close()
 	}
 }
 
-func (this *fileLogger) logMsg(t time.Time, data []byte) {
+func (this *fileLogger) logMsg(data []byte) {
 	if gLogger.config == nil { return }
+	t := time.Now()
 	_, _, d := t.Date()
 
 	if this.size/1024 >= this.config.MaxSize || this.day != d || this.file == nil {

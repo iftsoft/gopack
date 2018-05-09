@@ -37,5 +37,5 @@ func RunLoggingTest(name interface{}) {
 	appLog.Info("Value: %v, Type: %T", name, name)
 	appLog.Warn("Value: %v, Type: %T", name, name)
 	appLog.Error("Value: %v, Type: %T", name, name)
-	appLog.Panic("Value: %v, Type: %T", name, name)
+//	appLog.Panic("Value: %v, Type: %T", name, name)
 }
