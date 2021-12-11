@@ -1,17 +1,16 @@
 package ddl
 
 import (
-	"reflect"
-	"github.com/iftsoft/gopack/lla"
 	"errors"
+	"github.com/iftsoft/gopack/lla"
+	"reflect"
 )
-
 
 type ColumnMap map[string]string
 
 var ddlTableColumns map[string]ColumnMap
 
-func init(){
+func init() {
 	ddlTableColumns = make(map[string]ColumnMap)
 }
 
@@ -24,7 +23,7 @@ func RegisterObject(unit interface{}, table, alias string) {
 	if obj.Kind() == reflect.Slice {
 		panic(strErrDataIsSlice)
 	}
-	if 	_, ok := ddlTableColumns[table]; !ok {
+	if _, ok := ddlTableColumns[table]; !ok {
 		m := createColumnMap(unit, alias)
 		ddlTableColumns[table] = m
 	}
@@ -104,24 +103,21 @@ func iterateColumnMap(value reflect.Value, m ColumnMap, tab, pref, base string) 
 	}
 }
 
-
-
 type DBaseDAO struct {
 	DBaseLink
 	Name  string
 	timer lla.DurationTimer
 }
 
-func (dao *DBaseDAO)StartTimer(){
+func (dao *DBaseDAO) StartTimer() {
 	dao.timer.StartTimer()
 }
 
-func (dao *DBaseDAO)StopTimer() int {
+func (dao *DBaseDAO) StopTimer() int {
 	return dao.timer.Microseconds()
 }
 
-
-func (dao *DBaseDAO) MakeSelectQuery(unit interface{}, bld *SelectBuilder) (err error){
+func (dao *DBaseDAO) MakeSelectQuery(unit interface{}, bld *SelectBuilder) (err error) {
 	if bld != nil {
 		err = dao.ExecuteSelect(bld.BuildQuery(), bld.ParSlice(), unit)
 	} else {
@@ -130,7 +126,7 @@ func (dao *DBaseDAO) MakeSelectQuery(unit interface{}, bld *SelectBuilder) (err 
 	return err
 }
 
-func (dao *DBaseDAO) MakeSearchQuery(list interface{}, bld *SelectBuilder) (err error){
+func (dao *DBaseDAO) MakeSearchQuery(list interface{}, bld *SelectBuilder) (err error) {
 	if bld != nil {
 		err = dao.ExecuteSearch(bld.BuildQuery(), bld.ParSlice(), list)
 	} else {
@@ -139,7 +135,7 @@ func (dao *DBaseDAO) MakeSearchQuery(list interface{}, bld *SelectBuilder) (err 
 	return err
 }
 
-func (dao *DBaseDAO) MakeEstimateQuery(result interface{}, bld *SelectBuilder) (err error){
+func (dao *DBaseDAO) MakeEstimateQuery(result interface{}, bld *SelectBuilder) (err error) {
 	if bld != nil {
 		err = dao.ExecuteEstimate(bld.BuildQuery(), bld.ParSlice(), result)
 	} else {
@@ -148,7 +144,7 @@ func (dao *DBaseDAO) MakeEstimateQuery(result interface{}, bld *SelectBuilder) (
 	return err
 }
 
-func (dao *DBaseDAO) MakeUpdateQuery(bld *UpdateBuilder) (err error){
+func (dao *DBaseDAO) MakeUpdateQuery(bld *UpdateBuilder) (err error) {
 	if bld != nil {
 		err = dao.ExecuteUpdate(bld.BuildQuery(), bld.ParSlice())
 	} else {
@@ -157,10 +153,10 @@ func (dao *DBaseDAO) MakeUpdateQuery(bld *UpdateBuilder) (err error){
 	return err
 }
 
-func (dao *DBaseDAO) MakeInsertQuery(bld *InsertBuilder) (err error){
+func (dao *DBaseDAO) MakeInsertQuery(bld *InsertBuilder) (err error) {
 	if bld != nil {
 		if bld.IsAutoInsert() {
-			err = dao.ExecuteAutoInsert(bld.BuildQuery(), bld.ParSlice(), bld.AutoKeys(),  bld.Dialect().IsReturnKey())
+			err = dao.ExecuteAutoInsert(bld.BuildQuery(), bld.ParSlice(), bld.AutoKeys(), bld.Dialect().IsReturnKey())
 		} else {
 			err = dao.ExecuteInsert(bld.BuildQuery(), bld.ParSlice())
 		}
@@ -170,7 +166,7 @@ func (dao *DBaseDAO) MakeInsertQuery(bld *InsertBuilder) (err error){
 	return err
 }
 
-func (dao *DBaseDAO) MakeDeleteQuery(bld *DeleteBuilder) (err error){
+func (dao *DBaseDAO) MakeDeleteQuery(bld *DeleteBuilder) (err error) {
 	if bld != nil {
 		err = dao.ExecuteDelete(bld.BuildQuery(), bld.ParSlice())
 	} else {
@@ -178,4 +174,3 @@ func (dao *DBaseDAO) MakeDeleteQuery(bld *DeleteBuilder) (err error){
 	}
 	return err
 }
-

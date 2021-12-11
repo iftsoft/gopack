@@ -1,33 +1,32 @@
 package ddl
 
 import (
-	"unicode"
-	"reflect"
-	"fmt"
-	"time"
-	"math/big"
-	"strconv"
-	"encoding/json"
 	"database/sql"
+	"encoding/json"
+	"fmt"
 	"github.com/iftsoft/gopack/lla"
+	"math/big"
+	"reflect"
+	"strconv"
+	"time"
+	"unicode"
 )
 
 // Format to snake string, XxYy to xx_yy
 func FormatColumnName(name string) string {
 	runes := []rune(name)
-	size  := len(runes)
+	size := len(runes)
 	buf := make([]rune, 0, size+8)
 	for i := 0; i < size; i++ {
 		buf = append(buf, unicode.ToLower(runes[i]))
 		if i != size-1 && unicode.IsUpper(runes[i+1]) &&
 			(unicode.IsLower(runes[i]) || unicode.IsDigit(runes[i]) ||
-			(i != size-2 && unicode.IsLower(runes[i+2]))) {
+				(i != size-2 && unicode.IsLower(runes[i+2]))) {
 			buf = append(buf, '_')
 		}
 	}
 	return string(buf)
 }
-
 
 // Get column name for select query
 func GetColumnName(col string, pref string, tab string, as bool) string {
@@ -68,7 +67,6 @@ func getNickColumnName(col string, pref string, tab string) string {
 	}
 	return name
 }
-
 
 // StrTo is the target string
 type StrTo string
@@ -204,7 +202,7 @@ func ToStr(value interface{}) (s string) {
 	case bool:
 		s = strconv.FormatBool(v)
 	case float32:
-		s = strconv.FormatFloat(float64(v), 'f',10, 32)
+		s = strconv.FormatFloat(float64(v), 'f', 10, 32)
 	case float64:
 		s = strconv.FormatFloat(v, 'f', 10, 64)
 	case int:
@@ -251,7 +249,7 @@ func ToInt64(value interface{}) (d int64) {
 	return
 }
 
-func CheckValueToJson(value interface{}) (interface{}) {
+func CheckValueToJson(value interface{}) interface{} {
 	v := reflect.ValueOf(value)
 	if v.Kind() == reflect.Ptr {
 		if v.IsNil() {
@@ -262,7 +260,7 @@ func CheckValueToJson(value interface{}) (interface{}) {
 	}
 	switch v.Kind() {
 	// Slice or map
-	case reflect.Slice, reflect.Map :
+	case reflect.Slice, reflect.Map:
 		if txt, err := json.Marshal(value); err == nil {
 			return string(txt)
 		} else {
@@ -290,5 +288,3 @@ func CheckValueToJson(value interface{}) (interface{}) {
 	}
 	return value
 }
-
-

@@ -1,23 +1,22 @@
 package lla
 
 import (
-	"time"
-	"strings"
 	"database/sql/driver"
+	"strings"
+	"time"
 )
 
 const (
-	textDate		= "2006-01-02"
-	textTime		= "15:04:05"
-	textDateTime	= "2006-01-02 15:04:05"
-	textFullTime	= "2006-01-02 15:04:05.999999 -0700"
-	jsonDate		= "\"2006-01-02\""
-	jsonTime		= "\"15:04:05\""
-	jsonDateTime	= "\"2006-01-02 15:04:05\""
-	jsonFullTime	= "\"2006-01-02 15:04:05.999999 -0700\""
-	jsonNull		= "null"
+	textDate     = "2006-01-02"
+	textTime     = "15:04:05"
+	textDateTime = "2006-01-02 15:04:05"
+	textFullTime = "2006-01-02 15:04:05.999999 -0700"
+	jsonDate     = "\"2006-01-02\""
+	jsonTime     = "\"15:04:05\""
+	jsonDateTime = "\"2006-01-02 15:04:05\""
+	jsonFullTime = "\"2006-01-02 15:04:05.999999 -0700\""
+	jsonNull     = "null"
 )
-
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -35,9 +34,9 @@ func (t DateOnly) String() string {
 	return t.Format(textDate)
 }
 
-func (t *DateOnly) Today(){
+func (t *DateOnly) Today() {
 	tm := time.Now()
-	*t = DateOnly{ time.Date(tm.Year(), tm.Month(), tm.Day(), 0, 0, 0, 0, tm.Location()) }
+	*t = DateOnly{time.Date(tm.Year(), tm.Month(), tm.Day(), 0, 0, 0, 0, tm.Location())}
 }
 
 // MarshalJSON implements the json.Marshaler interface.
@@ -80,18 +79,21 @@ func (t *DateOnly) Scan(value interface{}) error {
 		*t = DateOnly{vt}
 	case []byte:
 		tt, err := time.Parse(textDate, string(vt))
-		if err != nil {	return err }
+		if err != nil {
+			return err
+		}
 		*t = DateOnly{tt}
 	case string:
 		tt, err := time.Parse(textDate, vt)
-		if err != nil {	return err }
+		if err != nil {
+			return err
+		}
 		*t = DateOnly{tt}
 	default:
 		*t = DateOnly{}
 	}
 	return nil
 }
-
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -109,9 +111,9 @@ func (t TimeOnly) String() string {
 	return t.Format(textTime)
 }
 
-func (t *TimeOnly) Now(){
+func (t *TimeOnly) Now() {
 	tm := time.Now()
-	*t = TimeOnly{ time.Date(0, 0, 0, tm.Hour(), tm.Minute(), tm.Second(), tm.Nanosecond(), tm.Location()) }
+	*t = TimeOnly{time.Date(0, 0, 0, tm.Hour(), tm.Minute(), tm.Second(), tm.Nanosecond(), tm.Location())}
 }
 
 // MarshalJSON implements the json.Marshaler interface.
@@ -130,7 +132,7 @@ func (t *TimeOnly) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	if strings.Compare(str, jsonNull) == 0 {
-		*t = TimeOnly{ time.Unix(0, -1) }
+		*t = TimeOnly{time.Unix(0, -1)}
 		return nil
 	}
 	tt, err := time.Parse(jsonTime, str)
@@ -146,7 +148,7 @@ func (t TimeOnly) Value() (driver.Value, error) {
 // Scan - Implement the database/sql scanner interface
 func (t *TimeOnly) Scan(value interface{}) error {
 	if value == nil {
-		*t = TimeOnly{ time.Unix(0, -1) }
+		*t = TimeOnly{time.Unix(0, -1)}
 		return nil
 	}
 	switch vt := value.(type) {
@@ -154,18 +156,21 @@ func (t *TimeOnly) Scan(value interface{}) error {
 		*t = TimeOnly{vt}
 	case []byte:
 		tt, err := time.Parse(textTime, string(vt))
-		if err != nil {	return err }
+		if err != nil {
+			return err
+		}
 		*t = TimeOnly{tt}
 	case string:
 		tt, err := time.Parse(textTime, vt)
-		if err != nil {	return err }
+		if err != nil {
+			return err
+		}
 		*t = TimeOnly{tt}
 	default:
-		*t = TimeOnly{ time.Unix(0, -1) }
+		*t = TimeOnly{time.Unix(0, -1)}
 	}
 	return nil
 }
-
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -183,8 +188,8 @@ func (t DateTime) String() string {
 	return t.Format(textDateTime)
 }
 
-func (t *DateTime) Now(){
-	*t = DateTime{ time.Now() }
+func (t *DateTime) Now() {
+	*t = DateTime{time.Now()}
 }
 
 // MarshalJSON implements the json.Marshaler interface.
@@ -227,18 +232,21 @@ func (t *DateTime) Scan(value interface{}) error {
 		*t = DateTime{vt}
 	case []byte:
 		tt, err := time.Parse(textDateTime, string(vt))
-		if err != nil {	return err }
+		if err != nil {
+			return err
+		}
 		*t = DateTime{tt}
 	case string:
 		tt, err := time.Parse(textDateTime, vt)
-		if err != nil {	return err }
+		if err != nil {
+			return err
+		}
 		*t = DateTime{tt}
 	default:
 		*t = DateTime{}
 	}
 	return nil
 }
-
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -256,8 +264,8 @@ func (t FullTime) String() string {
 	return t.Format(textFullTime)
 }
 
-func (t *FullTime) Now(){
-	*t = FullTime{ time.Now() }
+func (t *FullTime) Now() {
+	*t = FullTime{time.Now()}
 }
 
 // MarshalJSON implements the json.Marshaler interface.
@@ -300,16 +308,18 @@ func (t *FullTime) Scan(value interface{}) error {
 		*t = FullTime{vt}
 	case []byte:
 		tt, err := time.Parse(textFullTime, string(vt))
-		if err != nil {	return err }
+		if err != nil {
+			return err
+		}
 		*t = FullTime{tt}
 	case string:
 		tt, err := time.Parse(textFullTime, vt)
-		if err != nil {	return err }
+		if err != nil {
+			return err
+		}
 		*t = FullTime{tt}
 	default:
 		*t = FullTime{}
 	}
 	return nil
 }
-
-

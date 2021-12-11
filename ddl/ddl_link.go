@@ -2,8 +2,8 @@ package ddl
 
 import (
 	"database/sql"
-	"github.com/iftsoft/gopack/lla"
 	"errors"
+	"github.com/iftsoft/gopack/lla"
 	"reflect"
 )
 
@@ -21,7 +21,6 @@ const (
 	ddl_Rating = "Rating"
 )
 
-
 func DdlPanicRecover(err *error) {
 	if r := recover(); r != nil {
 		ddlLog.Panic("Panic is recovered: %+v", r)
@@ -36,10 +35,10 @@ func DdlPanicRecover(err *error) {
 // Common linker to database storage
 //
 type DBaseLink struct {
-	conn *DBaseConn		// Pointer to parent database connection
-	Err  error			// Error from database layer
-	Done int64			// Rows affected or fetch count
-	SqlTime int			// Wait for database reply (microsecond)
+	conn    *DBaseConn // Pointer to parent database connection
+	Err     error      // Error from database layer
+	Done    int64      // Rows affected or fetch count
+	SqlTime int        // Wait for database reply (microsecond)
 }
 
 // Set connection to DAO object
@@ -57,7 +56,6 @@ func (link *DBaseLink) Driver() string {
 	return ""
 }
 
-
 ///////////////////////////////////////////////////////////////////////
 // Select one row from database
 func (link *DBaseLink) ExecuteSelect(sqlText string, params []interface{}, unit interface{}) error {
@@ -73,7 +71,6 @@ func (link *DBaseLink) ExecuteSelect(sqlText string, params []interface{}, unit 
 	return link.Err
 }
 
-
 ///////////////////////////////////////////////////////////////////////
 // Search all rows from database
 func (link *DBaseLink) ExecuteSearch(sqlText string, params []interface{}, list interface{}) error {
@@ -88,7 +85,6 @@ func (link *DBaseLink) ExecuteSearch(sqlText string, params []interface{}, list 
 	}
 	return link.Err
 }
-
 
 ///////////////////////////////////////////////////////////////////////
 // Select one row from database
@@ -107,7 +103,6 @@ func (link *DBaseLink) ExecuteEstimate(sqlText string, params []interface{}, res
 	return link.Err
 }
 
-
 ///////////////////////////////////////////////////////////////////////
 // Update query execution
 func (link *DBaseLink) ExecuteUpdate(sqlText string, params []interface{}) error {
@@ -121,7 +116,6 @@ func (link *DBaseLink) ExecuteUpdate(sqlText string, params []interface{}) error
 	}
 	return link.Err
 }
-
 
 ///////////////////////////////////////////////////////////////////////
 // Insert query execution
@@ -142,7 +136,7 @@ func (link *DBaseLink) ExecuteAutoInsert(sqlText string, params []interface{},
 	out map[string]reflect.Value, ret bool) error {
 
 	ddlLog.Dump(sqlText)
-	if ret{
+	if ret {
 		link.Err = link.executeReturnSql(sqlText, params, out)
 	} else {
 		link.Err = link.executeCommandSql(sqlText, params)
@@ -154,7 +148,6 @@ func (link *DBaseLink) ExecuteAutoInsert(sqlText string, params []interface{},
 	}
 	return link.Err
 }
-
 
 ///////////////////////////////////////////////////////////////////////
 // Delete query execution
@@ -169,7 +162,6 @@ func (link *DBaseLink) ExecuteDelete(sqlText string, params []interface{}) error
 	}
 	return link.Err
 }
-
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -236,7 +228,3 @@ func (link *DBaseLink) executeReturnSql(sqlText string, params []interface{}, m 
 	ddlLog.Debug("SQL ReturnRow return %s", lla.GetErrorText(err))
 	return err
 }
-
-
-
-

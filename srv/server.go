@@ -2,29 +2,28 @@ package srv
 
 import (
 	"fmt"
+	"github.com/iftsoft/gopack/lla"
 	"net"
 	"net/http"
-	"time"
-	"syscall"
 	"os"
 	"os/signal"
-	"github.com/iftsoft/gopack/lla"
+	"syscall"
+	"time"
 )
 
 // Database Configuration
 type ServConfig struct {
-	LocalIp			string
-	NetPort 		string
-	ReadTimeout		int
-	WriteTimeout	int
-	UserTimeout		int
-	SessionTime		int
-	CookieName		string
-	TokenKey		string
-	ExtraKey		string
-	StaticDir		string
+	LocalIp      string
+	NetPort      string
+	ReadTimeout  int
+	WriteTimeout int
+	UserTimeout  int
+	SessionTime  int
+	CookieName   string
+	TokenKey     string
+	ExtraKey     string
+	StaticDir    string
 }
-
 
 // Print config data to console
 func (cfg *ServConfig) PrintData() {
@@ -39,29 +38,27 @@ func (cfg *ServConfig) PrintData() {
 	fmt.Println("ExtraKey ", len(cfg.ExtraKey))
 	fmt.Println("StaticDir ", cfg.StaticDir)
 }
+
 // Get formatted string with config data
 func (cfg *ServConfig) String() string {
-	str := fmt.Sprintf("Service config: " +
-		"LocalIp = %s, NetPort = %s, ReadTimeout = %d sec, WriteTimeout = %d sec, " +
-		"UserTimeout = %d sec, SessionTime = %d sec, CookieName = %s, " +
+	str := fmt.Sprintf("Service config: "+
+		"LocalIp = %s, NetPort = %s, ReadTimeout = %d sec, WriteTimeout = %d sec, "+
+		"UserTimeout = %d sec, SessionTime = %d sec, CookieName = %s, "+
 		"TokenKey = %d Byte, ExtraKey = %d Byte, StaticDir = \"%s\".",
-		cfg.LocalIp, cfg.NetPort,  cfg.ReadTimeout,  cfg.WriteTimeout,
-		cfg.UserTimeout,  cfg.SessionTime,  cfg.CookieName,
+		cfg.LocalIp, cfg.NetPort, cfg.ReadTimeout, cfg.WriteTimeout,
+		cfg.UserTimeout, cfg.SessionTime, cfg.CookieName,
 		len(cfg.TokenKey), len(cfg.ExtraKey), cfg.StaticDir)
 	return str
 }
 
-
 // Log Agent for service layer logging
 var srvLog lla.LogAgent
 
-func InitLoggerSRV(level int){
+func InitLoggerSRV(level int) {
 	srvLog.Init(level, "SRV")
 }
 
 ///////////////////////////////////////////////////////////////////////
-
-
 
 func Run(srvCfg *ServConfig) error {
 	netSpec := fmt.Sprintf("%s:%s", srvCfg.LocalIp, srvCfg.NetPort)
@@ -72,14 +69,18 @@ func Run(srvCfg *ServConfig) error {
 		srvLog.Error("Error creating listener: %v", err)
 		return err
 	}
-	if srvCfg.ReadTimeout == 0	{	srvCfg.ReadTimeout = 30	}
-	if srvCfg.WriteTimeout == 0	{	srvCfg.WriteTimeout = 20	}
+	if srvCfg.ReadTimeout == 0 {
+		srvCfg.ReadTimeout = 30
+	}
+	if srvCfg.WriteTimeout == 0 {
+		srvCfg.WriteTimeout = 20
+	}
 
 	server := &http.Server{
 		ReadTimeout:    time.Duration(srvCfg.ReadTimeout) * time.Second,
 		WriteTimeout:   time.Duration(srvCfg.WriteTimeout) * time.Second,
 		MaxHeaderBytes: 1 << 16,
-		}
+	}
 
 	go server.Serve(listener)
 
@@ -94,4 +95,3 @@ func waitForSignal() {
 	s := <-ch
 	srvLog.Info("Got signal: %v, exiting.", s)
 }
-

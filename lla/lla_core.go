@@ -1,20 +1,20 @@
 package lla
 
 import (
-	"runtime"
-	"fmt"
 	"bytes"
+	"fmt"
+	"runtime"
 	"time"
 )
 
 type LogConfig struct {
-	LogPath     string
-	LogFile     string
-	LogLevel	int
-	ConsLevel	int
-	MaxFiles    int				// limit the number of log files under `logPath`
-	DelFiles	int				// number of files deleted when reaching the limit of the number of log files
-	MaxSize     int64			// limit size of a log file (KByte)
+	LogPath   string
+	LogFile   string
+	LogLevel  int
+	ConsLevel int
+	MaxFiles  int   // limit the number of log files under `logPath`
+	DelFiles  int   // number of files deleted when reaching the limit of the number of log files
+	MaxSize   int64 // limit size of a log file (KByte)
 }
 
 func (cfg *LogConfig) PrintData() {
@@ -27,7 +27,7 @@ func (cfg *LogConfig) PrintData() {
 	fmt.Println("MaxSize  ", cfg.MaxSize)
 }
 func (cfg *LogConfig) String() string {
-	str := fmt.Sprintf("Logging config: " +
+	str := fmt.Sprintf("Logging config: "+
 		"LogPath = %s, LogFile = %s, LogLevel = %s, ConsLevel = %s, MaxFiles = %d, DelFiles = %d, MaxSize = %d.",
 		cfg.LogPath, cfg.LogFile, GetLogLevelText(cfg.LogLevel), GetLogLevelText(cfg.ConsLevel), cfg.MaxFiles, cfg.DelFiles, cfg.MaxSize)
 	return str
@@ -35,7 +35,7 @@ func (cfg *LogConfig) String() string {
 
 // Used to get duration of process
 type DurationTimer struct {
-	start	time.Time
+	start time.Time
 }
 
 // Save time of process beginning
@@ -51,32 +51,33 @@ func (timer *DurationTimer) Nanoseconds() int64 {
 	}
 	return 0
 }
+
 // Get process duration in microseconds
 func (timer *DurationTimer) Microseconds() int {
 	if !timer.start.IsZero() {
 		delta := time.Now().Sub(timer.start)
-		return int(delta/time.Microsecond)
+		return int(delta / time.Microsecond)
 	}
 	return 0
 }
+
 // Get process duration in milliseconds
 func (timer *DurationTimer) Milliseconds() int {
 	if !timer.start.IsZero() {
 		delta := time.Now().Sub(timer.start)
-		return int(delta/time.Millisecond)
+		return int(delta / time.Millisecond)
 	}
 	return 0
 }
+
 // Get process duration in seconds
 func (timer *DurationTimer) Seconds() int {
 	if !timer.start.IsZero() {
 		delta := time.Now().Sub(timer.start)
-		return int(delta/time.Second)
+		return int(delta / time.Second)
 	}
 	return 0
 }
-
-
 
 // Get go routine ID as a string
 func GetGID() string {
@@ -97,7 +98,7 @@ func GetErrorText(err error) string {
 
 // Get Call Stack Trace as a string
 func TraceCallStack(text string, i int) string {
-//	i := 2
+	//	i := 2
 	for {
 		pc, file, line, ok := runtime.Caller(i)
 		if !ok {
@@ -108,7 +109,3 @@ func TraceCallStack(text string, i int) string {
 	}
 	return text
 }
-
-
-
-

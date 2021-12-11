@@ -1,32 +1,31 @@
 package ddl
 
 import (
-	"reflect"
 	"database/sql"
-	"errors"
-	"time"
 	"encoding/json"
+	"errors"
 	"github.com/iftsoft/gopack/lla"
+	"reflect"
+	"time"
 )
 
-
 const (
-	strErrMakeBuilder	= "Can't create query builder"
+	strErrMakeBuilder = "Can't create query builder"
 	//	strErrNullBasePtr	= "Invalid pointer to DB connect"
-	strErrNullDaoPtr	= "Invalid pointer to DAO object"
-	strErrNullBldPtr	= "Invalid pointer to SQL builder"
-	strErrNullDataPtr	= "Attempt to load into an invalid pointer"
-	strErrDataIsSlice	= "Unit target is slice"
-	strErrDataIsUnit	= "List target is not slice"
+	strErrNullDaoPtr  = "Invalid pointer to DAO object"
+	strErrNullBldPtr  = "Invalid pointer to SQL builder"
+	strErrNullDataPtr = "Attempt to load into an invalid pointer"
+	strErrDataIsSlice = "Unit target is slice"
+	strErrDataIsUnit  = "List target is not slice"
 )
 
 //var ddlErrMakeBuilder	= errors.New("Can't create query builder")
-var ddlErrNullDaoPtr	= errors.New(strErrNullDaoPtr)
-var ddlErrNullBldPtr	= errors.New(strErrNullBldPtr)
+var ddlErrNullDaoPtr = errors.New(strErrNullDaoPtr)
+var ddlErrNullBldPtr = errors.New(strErrNullBldPtr)
+
 //var ddlErrNullDataPtr	= errors.New(strErrNullDataPtr)
 //var ddlErrDataIsSlice	= errors.New(strErrDataIsSlice)
 //var ddlErrDataIsUnit	= errors.New(strErrDataIsUnit)
-
 
 // Fetch columns data from selected record and fill object structure
 func fetchReturnedRow(rows *sql.Rows, m map[string]reflect.Value) (int64, error) {
@@ -148,7 +147,6 @@ func getDummyColumnValues(colsNum int) []interface{} {
 	return refs
 }
 
-
 // Fill Object structure with column data
 func iterateColumnValues(refs []interface{}, column []string, m map[string]reflect.Value) error {
 	// Iterate through columns in record
@@ -165,7 +163,6 @@ func iterateColumnValues(refs []interface{}, column []string, m map[string]refle
 	}
 	return nil
 }
-
 
 func DefineColumnValues(value reflect.Value) map[string]reflect.Value {
 	// Init and fill map of Value holders
@@ -336,7 +333,7 @@ func setUnitColumnValue(val reflect.Value, dst reflect.Value, col string) error 
 	case reflect.Struct:
 		switch fld.Interface().(type) {
 		case time.Time, lla.DateOnly, lla.DateTime, lla.TimeOnly, lla.FullTime:
-//			ddlLog.Info("Column %s, Target = %v (%v), Source = %v, Value = %v", col, dstType, dstKind, srcType, src)
+			//			ddlLog.Info("Column %s, Target = %v (%v), Source = %v, Value = %v", col, dstType, dstKind, srcType, src)
 			if src == nil {
 				fld.Set(reflect.Zero(fld.Type()))
 			} else {
@@ -365,10 +362,10 @@ func setUnitColumnValue(val reflect.Value, dst reflect.Value, col string) error 
 				} else {
 					if str != nil {
 						ns.String = str.String()
-						ns.Valid  = true
+						ns.Valid = true
 					} else {
 						ns.String = ToStr(src)
-						ns.Valid  = true
+						ns.Valid = true
 					}
 				}
 				fld.Set(reflect.ValueOf(ns))
@@ -458,7 +455,7 @@ func setUnitColumnValue(val reflect.Value, dst reflect.Value, col string) error 
 			}
 		}
 	// Slice or map
-	case reflect.Slice, reflect.Map :
+	case reflect.Slice, reflect.Map:
 		if str == nil {
 			fld.Set(reflect.Zero(fld.Type()))
 		} else {
@@ -472,5 +469,3 @@ func setUnitColumnValue(val reflect.Value, dst reflect.Value, col string) error 
 	}
 	return nil
 }
-
-

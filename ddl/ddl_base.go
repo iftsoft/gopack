@@ -2,10 +2,10 @@ package ddl
 
 import (
 	"database/sql"
-	"fmt"
-	"time"
 	"errors"
+	"fmt"
 	"github.com/iftsoft/gopack/lla"
+	"time"
 )
 
 // Database Configuration
@@ -16,11 +16,10 @@ type DBaseConfig struct {
 	BaseName string
 	UserName string
 	UserPass string
-	MaxIdle int
-	MaxOpen int
-	MaxTime int
+	MaxIdle  int
+	MaxOpen  int
+	MaxTime  int
 }
-
 
 // Print config data to console
 func (cfg *DBaseConfig) PrintData() {
@@ -34,10 +33,11 @@ func (cfg *DBaseConfig) PrintData() {
 	fmt.Println("MaxIdle  ", cfg.MaxIdle)
 	fmt.Println("MaxOpen  ", cfg.MaxOpen)
 }
+
 // Get formatted string with config data
 func (cfg *DBaseConfig) String() string {
-	str := fmt.Sprintf("Database config: " +
-		"DbDriver = %s, HostName = %s, HostPort = %s, BaseName = %s, " +
+	str := fmt.Sprintf("Database config: "+
+		"DbDriver = %s, HostName = %s, HostPort = %s, BaseName = %s, "+
 		"UserName = %s, UserPass = %s, MaxTime = %d, MaxIdle = %d, MaxOpen = %d.",
 		cfg.DbDriver, cfg.HostName, cfg.HostPort, cfg.BaseName,
 		cfg.UserName, cfg.UserPass, cfg.MaxTime, cfg.MaxIdle, cfg.MaxOpen)
@@ -47,7 +47,7 @@ func (cfg *DBaseConfig) String() string {
 // Log Agent for sql layer logging
 var ddlLog lla.LogAgent
 
-func InitLoggerSQL(level int){
+func InitLoggerSQL(level int) {
 	ddlLog.Init(level, "SQL")
 }
 
@@ -67,7 +67,7 @@ func GetDsnPostgres(cfg *DBaseConfig) string {
 }
 
 // Open Database store from config data
-func (store *DBaseStore) Open(cfg *DBaseConfig) (err error){
+func (store *DBaseStore) Open(cfg *DBaseConfig) (err error) {
 	store.Close()
 	if cfg != nil {
 		store.driver = cfg.DbDriver
@@ -97,7 +97,6 @@ func (store *DBaseStore) Close() (err error) {
 func (store *DBaseStore) GetSqlDB() *sql.DB {
 	return store.base
 }
-
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -207,6 +206,3 @@ func (conn *DBaseConn) doExec(query string, args ...interface{}) (sql.Result, er
 	var res sql.Result
 	return res, ddlErrNullDaoPtr
 }
-
-
-

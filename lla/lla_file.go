@@ -1,20 +1,20 @@
 package lla
 
 import (
-	"os"
-	"sort"
-	"time"
 	"fmt"
+	"os"
 	"path"
+	"sort"
 	"strings"
+	"time"
 )
 
 const (
-	kChannelSize		= 1024
-//	kMaxInt64			= int64(^uint64(0) >> 1)
-	kLogExtensionLen	= 4
-	kLogCreatedTimeLen	= 15 + kLogExtensionLen
-	kLogFilenameMinLen	= 5  + kLogCreatedTimeLen
+	kChannelSize = 1024
+	//	kMaxInt64			= int64(^uint64(0) >> 1)
+	kLogExtensionLen   = 4
+	kLogCreatedTimeLen = 15 + kLogExtensionLen
+	kLogFilenameMinLen = 5 + kLogCreatedTimeLen
 )
 
 var gProgname = path.Base(os.Args[0])
@@ -30,19 +30,17 @@ func init() {
 
 // logger
 type fileLogger struct {
-	config	*LogConfig
-	file  	*os.File
-	day 	int
-	size	int64
-	read	chan []byte
-	files	int   // number of files under `logPath` currently
+	config *LogConfig
+	file   *os.File
+	day    int
+	size   int64
+	read   chan []byte
+	files  int // number of files under `logPath` currently
 }
 
 var gLogger fileLogger
 
-
-
-func StartFileLogger(cfg *LogConfig){
+func StartFileLogger(cfg *LogConfig) {
 	gLogger.config = cfg
 	if gLogger.config != nil && gLogger.config.LogLevel > LogLevelEmpty {
 		gLogger.read = make(chan []byte, kChannelSize)
@@ -67,12 +65,12 @@ func LogToFile(level int, mesg string) {
 	}
 }
 
-func (this *fileLogger) work(){
+func (this *fileLogger) work() {
 	this.delOldFiles()
 	this.reopenLogFile(time.Now())
 	for {
 		select {
-		case mesg := <- this.read :
+		case mesg := <-this.read:
 			if len(mesg) > 0 {
 				this.logMsg(mesg)
 			} else {
@@ -88,7 +86,9 @@ func (this *fileLogger) work(){
 }
 
 func (this *fileLogger) logMsg(data []byte) {
-	if gLogger.config == nil { return }
+	if gLogger.config == nil {
+		return
+	}
 	t := time.Now()
 	_, _, d := t.Date()
 
@@ -113,7 +113,7 @@ func (this *fileLogger) delOldFiles() {
 		sort.Sort(byCreatedTime(files))
 		//			fmt.Println(files)
 		nfiles := this.files - this.config.MaxFiles + this.config.DelFiles
-		if  nfiles > this.files {
+		if nfiles > this.files {
 			nfiles = this.files
 		}
 		for i := 0; i < nfiles; i++ {
@@ -144,10 +144,9 @@ func (this *fileLogger) reopenLogFile(t time.Time) {
 		this.file.Close()
 	}
 	this.file = newfile
-	this.day  = d
+	this.day = d
 	this.size = 0
 }
-
 
 // sort files by created time embedded in the filename
 type byCreatedTime []string
@@ -163,9 +162,9 @@ func (a byCreatedTime) Less(i, j int) bool {
 	} else if len(s2) < kLogFilenameMinLen {
 		return false
 	} else {
-		sa := s1[len(s1)-kLogCreatedTimeLen:len(s1)-kLogExtensionLen]
-		sb := s2[len(s2)-kLogCreatedTimeLen:len(s2)-kLogExtensionLen]
-//		fmt.Println(sa, sb)
+		sa := s1[len(s1)-kLogCreatedTimeLen : len(s1)-kLogExtensionLen]
+		sb := s2[len(s2)-kLogCreatedTimeLen : len(s2)-kLogExtensionLen]
+		//		fmt.Println(sa, sb)
 		return sa < sb
 	}
 }
@@ -186,4 +185,3 @@ func getLogfilenames(dir string) ([]string, error) {
 	}
 	return filenames, err
 }
-

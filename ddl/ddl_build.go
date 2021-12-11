@@ -1,9 +1,9 @@
 package ddl
 
 import (
-	"reflect"
 	"fmt"
 	"github.com/iftsoft/gopack/lla"
+	"reflect"
 )
 
 const ddl_estimate_result = "estimate_result"
@@ -22,39 +22,39 @@ type CommonBuilder struct {
 	paramCnt  int
 }
 
-func (this *CommonBuilder)ParSlice() []interface{} {
+func (this *CommonBuilder) ParSlice() []interface{} {
 	return this.parSlice
 }
 
-func (this *CommonBuilder)Dialect() Dialector {
+func (this *CommonBuilder) Dialect() Dialector {
 	return this.dialect
 }
 
-func (this *CommonBuilder)And() (*CommonBuilder) {
+func (this *CommonBuilder) And() *CommonBuilder {
 	this.paramStr += " AND "
 	return this
 }
-func (this *CommonBuilder)Or() (*CommonBuilder) {
+func (this *CommonBuilder) Or() *CommonBuilder {
 	this.paramStr += " OR "
 	return this
 }
-func (this *CommonBuilder)GrpBeg() (*CommonBuilder) {
+func (this *CommonBuilder) GrpBeg() *CommonBuilder {
 	this.paramStr += "( "
 	return this
 }
-func (this *CommonBuilder)GrpEnd() (*CommonBuilder) {
+func (this *CommonBuilder) GrpEnd() *CommonBuilder {
 	this.paramStr += " )"
 	return this
 }
 
-func (this *CommonBuilder)IsNull(alias string, name string) (*CommonBuilder) {
+func (this *CommonBuilder) IsNull(alias string, name string) *CommonBuilder {
 	if alias != "" {
 		alias += "."
 	}
 	this.paramStr += fmt.Sprintf("%s%s IS NULL", alias, name)
 	return this
 }
-func (this *CommonBuilder)IsNotNull(alias string, name string) (*CommonBuilder) {
+func (this *CommonBuilder) IsNotNull(alias string, name string) *CommonBuilder {
 	if alias != "" {
 		alias += "."
 	}
@@ -62,32 +62,32 @@ func (this *CommonBuilder)IsNotNull(alias string, name string) (*CommonBuilder) 
 	return this
 }
 
-func (this *CommonBuilder)Equal(alias string, name string, value interface{}) (*CommonBuilder) {
+func (this *CommonBuilder) Equal(alias string, name string, value interface{}) *CommonBuilder {
 	this.appendParam(alias, name, " = ", value)
 	return this
 }
-func (this *CommonBuilder)NotEqual(alias string, name string, value interface{}) (*CommonBuilder) {
+func (this *CommonBuilder) NotEqual(alias string, name string, value interface{}) *CommonBuilder {
 	this.appendParam(alias, name, " != ", value)
 	return this
 }
-func (this *CommonBuilder)Grater(alias string, name string, value interface{}) (*CommonBuilder) {
+func (this *CommonBuilder) Grater(alias string, name string, value interface{}) *CommonBuilder {
 	this.appendParam(alias, name, " > ", value)
 	return this
 }
-func (this *CommonBuilder)GrEqual(alias string, name string, value interface{}) (*CommonBuilder) {
+func (this *CommonBuilder) GrEqual(alias string, name string, value interface{}) *CommonBuilder {
 	this.appendParam(alias, name, " >= ", value)
 	return this
 }
-func (this *CommonBuilder)Later(alias string, name string, value interface{}) (*CommonBuilder) {
+func (this *CommonBuilder) Later(alias string, name string, value interface{}) *CommonBuilder {
 	this.appendParam(alias, name, " < ", value)
 	return this
 }
-func (this *CommonBuilder)LtEqual(alias string, name string, value interface{}) (*CommonBuilder) {
+func (this *CommonBuilder) LtEqual(alias string, name string, value interface{}) *CommonBuilder {
 	this.appendParam(alias, name, " <= ", value)
 	return this
 }
 
-func (this *CommonBuilder)appendParam(alias string, name string, cmd string, value interface{}) (*CommonBuilder) {
+func (this *CommonBuilder) appendParam(alias string, name string, cmd string, value interface{}) *CommonBuilder {
 	if alias != "" {
 		this.paramStr += alias + "."
 	}
@@ -99,15 +99,17 @@ func (this *CommonBuilder)appendParam(alias string, name string, cmd string, val
 	return this
 }
 
-func (this *CommonBuilder)AppendParamValue(value interface{}) {
+func (this *CommonBuilder) AppendParamValue(value interface{}) {
 	this.parSlice = append(this.parSlice, CheckValueToJson(value))
 }
 
-func (this *CommonBuilder)SetParamList(keys lla.ParamList) (*CommonBuilder) {
+func (this *CommonBuilder) SetParamList(keys lla.ParamList) *CommonBuilder {
 	var count = 0
 	for _, par := range keys {
 		if col, ok := GetTableColumnName(this.TableName, par.Field); ok {
-			if this.paramCnt > 0 {	this.And()	}
+			if this.paramCnt > 0 {
+				this.And()
+			}
 			this.Equal("", col, par.Value)
 			count++
 		}
@@ -115,14 +117,12 @@ func (this *CommonBuilder)SetParamList(keys lla.ParamList) (*CommonBuilder) {
 	return this
 }
 
-func (this *CommonBuilder)getWhereClause() string {
+func (this *CommonBuilder) getWhereClause() string {
 	if this.paramStr != "" {
 		return " WHERE " + this.paramStr
 	}
 	return ""
 }
-
-
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -134,8 +134,8 @@ type SelectBuilder struct {
 	fieldStr string
 	JoinList string
 	OrderBy  string
-	Limit	uint32
-	Offset	uint32
+	Limit    uint32
+	Offset   uint32
 }
 
 func CreateSelectBuilder(driver, table, alias string) *SelectBuilder {
@@ -145,23 +145,23 @@ func CreateSelectBuilder(driver, table, alias string) *SelectBuilder {
 		return nil
 	}
 	// Reserve slice for params
-	bld.parSlice  = make([]interface{}, 0, 8)
-	bld.dialect   = GetDialector(driver)
+	bld.parSlice = make([]interface{}, 0, 8)
+	bld.dialect = GetDialector(driver)
 	bld.TableName = table
 	bld.MainAlias = alias
-	bld.Limit	= 0
-	bld.Offset	= 0
+	bld.Limit = 0
+	bld.Offset = 0
 	return bld
 }
 
-func (this *SelectBuilder)SetLimitOffset(lim, off uint32) (*SelectBuilder) {
-	this.Limit	= lim
-	this.Offset	= off
+func (this *SelectBuilder) SetLimitOffset(lim, off uint32) *SelectBuilder {
+	this.Limit = lim
+	this.Offset = off
 	return this
 }
 
 func (this *SelectBuilder) SetupEstimateCount(prkey string) {
-	this.fieldStr = fmt.Sprintf( " count(%s.%s) as %s ",
+	this.fieldStr = fmt.Sprintf(" count(%s.%s) as %s ",
 		this.MainAlias, prkey, ddl_estimate_result)
 	this.fieldCnt++
 }
@@ -216,7 +216,6 @@ func (this *SelectBuilder) iterateSelectFields(value reflect.Value, tab string, 
 	}
 }
 
-
 func (this *SelectBuilder) defineUnitFields(value reflect.Value, tab string, pref string, as bool) {
 	var info FieldInfo
 
@@ -270,11 +269,13 @@ func (this *SelectBuilder) JoinTable2(table string, alias string, col1 string, k
 		table, alias, this.MainAlias, col1, alias, key1, this.MainAlias, col2, alias, key2)
 }
 
-func (this *SelectBuilder)AndParamMap(keys map[string]interface{}) (*SelectBuilder) {
+func (this *SelectBuilder) AndParamMap(keys map[string]interface{}) *SelectBuilder {
 	var count = 0
 	for key, val := range keys {
 		if col, ok := GetTableColumnName(this.TableName, key); ok {
-			if this.paramCnt > 0 {	this.And()	}
+			if this.paramCnt > 0 {
+				this.And()
+			}
 			this.Equal("", col, val)
 			count++
 		}
@@ -282,13 +283,15 @@ func (this *SelectBuilder)AndParamMap(keys map[string]interface{}) (*SelectBuild
 	return this
 }
 
-func (this *SelectBuilder)SetListFilter(filter *lla.ClauseList) (*SelectBuilder) {
+func (this *SelectBuilder) SetListFilter(filter *lla.ClauseList) *SelectBuilder {
 	this.iterateCondGroup(filter, lla.Type_Group_AND)
 	return this
 }
 
 func (this *SelectBuilder) iterateCondGroup(val interface{}, grpType lla.ClauseType) {
-	if val == nil { return }
+	if val == nil {
+		return
+	}
 	ref := reflect.ValueOf(val)
 	switch ref.Kind() {
 	case reflect.Ptr:
@@ -300,29 +303,31 @@ func (this *SelectBuilder) iterateCondGroup(val interface{}, grpType lla.ClauseT
 			for i, cond := range list {
 				if i > 0 {
 					switch grpType {
-					case lla.Type_Group_AND:	this.And()
-					case lla.Type_Group_OR: 	this.Or()
+					case lla.Type_Group_AND:
+						this.And()
+					case lla.Type_Group_OR:
+						this.Or()
 					}
 				}
 				switch cond.Type {
 				case lla.Type_Statement:
 					if col, ok := GetTableColumnName(this.TableName, cond.Field); ok {
 						switch cond.Stat {
-						case lla.Stat_Equal :
+						case lla.Stat_Equal:
 							this.Equal("", col, cond.Value)
-						case lla.Stat_NotEqual :
+						case lla.Stat_NotEqual:
 							this.NotEqual("", col, cond.Value)
-						case lla.Stat_Grater :
+						case lla.Stat_Grater:
 							this.Grater("", col, cond.Value)
-						case lla.Stat_GrEqual :
+						case lla.Stat_GrEqual:
 							this.GrEqual("", col, cond.Value)
-						case lla.Stat_Later :
+						case lla.Stat_Later:
 							this.Later("", col, cond.Value)
-						case lla.Stat_LtEqual :
+						case lla.Stat_LtEqual:
 							this.LtEqual("", col, cond.Value)
-						case lla.Stat_IsNull :
+						case lla.Stat_IsNull:
 							this.IsNull("", col)
-						case lla.Stat_IsNotNull :
+						case lla.Stat_IsNotNull:
 							this.IsNotNull("", col)
 						}
 					}
@@ -337,9 +342,7 @@ func (this *SelectBuilder) iterateCondGroup(val interface{}, grpType lla.ClauseT
 	return
 }
 
-
-
-func (this *SelectBuilder)SetSortOrder(sortList *lla.OrderList) (*SelectBuilder) {
+func (this *SelectBuilder) SetSortOrder(sortList *lla.OrderList) *SelectBuilder {
 	var count = 0
 	if sortList == nil {
 		return this
@@ -351,9 +354,9 @@ func (this *SelectBuilder)SetSortOrder(sortList *lla.OrderList) (*SelectBuilder)
 			}
 			this.OrderBy += col
 			switch sort.Sort {
-			case lla.Sort_Asc :
+			case lla.Sort_Asc:
 				this.OrderBy += " asc"
-			case lla.Sort_Desc :
+			case lla.Sort_Desc:
 				this.OrderBy += " desc"
 			}
 			count++
@@ -362,15 +365,14 @@ func (this *SelectBuilder)SetSortOrder(sortList *lla.OrderList) (*SelectBuilder)
 	return this
 }
 
-
-func (this *SelectBuilder)getOrderClause() string {
+func (this *SelectBuilder) getOrderClause() string {
 	if this.OrderBy != "" {
 		return " ORDER BY " + this.OrderBy
 	}
 	return ""
 }
 
-func (this *SelectBuilder)getLimitClause() string {
+func (this *SelectBuilder) getLimitClause() string {
 	str := ""
 	if this.Limit > 0 {
 		str = fmt.Sprintf(" LIMIT %d", this.Limit)
@@ -389,15 +391,13 @@ func (this *SelectBuilder) BuildQuery() string {
 	return this.SqlText
 }
 
-
-
 ///////////////////////////////////////////////////////////////////////
 //
 // Update SQL Builder
 //
 type UpdateBuilder struct {
 	CommonBuilder
-	setText  	string
+	setText string
 }
 
 func CreateUpdateBuilder(driver, table string) *UpdateBuilder {
@@ -407,12 +407,11 @@ func CreateUpdateBuilder(driver, table string) *UpdateBuilder {
 		return nil
 	}
 	// Reserve slice for params
-	bld.parSlice  = make([]interface{}, 0, 32)
-	bld.dialect   = GetDialector(driver)
+	bld.parSlice = make([]interface{}, 0, 32)
+	bld.dialect = GetDialector(driver)
 	bld.TableName = table
 	return bld
 }
-
 
 // Create set param list for update
 func (this *UpdateBuilder) SetupUpdateParams(unit interface{}) {
@@ -490,7 +489,6 @@ func (this *UpdateBuilder) BuildQuery() string {
 	return this.SqlText
 }
 
-
 ///////////////////////////////////////////////////////////////////////
 //
 // Insert SQL Builder
@@ -508,9 +506,9 @@ func CreateInsertBuilder(driver, table string) *InsertBuilder {
 		return nil
 	}
 	// Reserve slice for params
-	bld.parSlice  = make([]interface{}, 0, 32)
-	bld.autoKeys  = make(map[string]reflect.Value)
-	bld.dialect   = GetDialector(driver)
+	bld.parSlice = make([]interface{}, 0, 32)
+	bld.autoKeys = make(map[string]reflect.Value)
+	bld.dialect = GetDialector(driver)
 	bld.TableName = table
 	return bld
 }
@@ -523,13 +521,12 @@ func (this *InsertBuilder) AutoKeys() map[string]reflect.Value {
 	return this.autoKeys
 }
 
-
 // Create set param list for insert
 func (this *InsertBuilder) SetupInsertParams(unit interface{}) {
 	this.defineUnitParams(reflect.ValueOf(unit), "")
 }
 
-func (this *InsertBuilder)defineUnitParams(value reflect.Value, pref string) {
+func (this *InsertBuilder) defineUnitParams(value reflect.Value, pref string) {
 	switch value.Kind() {
 	case reflect.Ptr:
 		if value.IsNil() {
@@ -602,8 +599,6 @@ func (this *InsertBuilder) BuildQuery() string {
 	return this.SqlText
 }
 
-
-
 ///////////////////////////////////////////////////////////////////////
 //
 // Delete SQL Builder
@@ -619,8 +614,8 @@ func CreateDeleteBuilder(driver, table string, alias string) *DeleteBuilder {
 		return nil
 	}
 	// Reserve slice for params
-	bld.parSlice  = make([]interface{}, 0, 4)
-	bld.dialect   = GetDialector(driver)
+	bld.parSlice = make([]interface{}, 0, 4)
+	bld.dialect = GetDialector(driver)
 	bld.TableName = table
 	bld.MainAlias = alias
 	return bld
@@ -632,6 +627,3 @@ func (this *DeleteBuilder) BuildQuery() string {
 		this.TableName, this.MainAlias, this.paramStr)
 	return this.SqlText
 }
-
-
-

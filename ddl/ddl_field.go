@@ -1,8 +1,8 @@
 package ddl
 
 import (
-	"strings"
 	"reflect"
+	"strings"
 )
 
 // Reserved words
@@ -90,4 +90,3 @@ func (info *FieldInfo) ParseFieldTag(tag string) {
 		info.DdlType = Field_Col
 	}
 }
-
