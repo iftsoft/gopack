@@ -15,7 +15,7 @@ func InitLoggerAPP(level int) {
 func main() {
 	fmt.Println("-------BEGIN------------")
 
-	logCfg := lla.LogConfig{"../../../../log/", "test_gopack",
+	logCfg := lla.LogConfig{"./log/", "test_gopack",
 		lla.LogLevelTrace, lla.LogLevelTrace, 10, 1, 10000}
 
 	lla.StartFileLogger(&logCfg)
@@ -24,7 +24,7 @@ func main() {
 	name := "Test Name"
 	RunLoggingTest(name)
 
-	time.Sleep(20*time.Millisecond)
+	time.Sleep(20 * time.Millisecond)
 	lla.StopFileLogger()
 	fmt.Println("-------END------------")
 }
@@ -37,5 +37,5 @@ func RunLoggingTest(name interface{}) {
 	appLog.Info("Value: %v, Type: %T", name, name)
 	appLog.Warn("Value: %v, Type: %T", name, name)
 	appLog.Error("Value: %v, Type: %T", name, name)
-//	appLog.Panic("Value: %v, Type: %T", name, name)
+	//	appLog.Panic("Value: %v, Type: %T", name, name)
 }
